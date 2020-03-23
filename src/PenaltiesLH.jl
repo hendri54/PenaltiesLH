@@ -4,7 +4,7 @@ using ArgCheck, DocStringExtensions, Parameters
 
 export Penalty, PenaltyVector
 # Penalty
-export name, compute_penalty, scalar_value, set_scalar_value, use, no_use
+export name, compute_penalty, scalar_value, set_scalar_value, use, no_use, is_used
 # PenaltyVector
 export retrieve, penalty_dict, total_penalty, compute_all_penalties, report_penalties
 

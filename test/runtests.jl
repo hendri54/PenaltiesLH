@@ -1,7 +1,8 @@
 using PenaltiesLH
 using Test
 
-scalar_test_fct(x) = sum(x);
+# Scalar penalty functions must accept multiple arguments as tuples
+scalar_test_fct((x, y)) = sum(x) + sum(y);
 
 function make_test_penalty(pName :: Symbol; isUsed :: Bool = true)
     return Penalty(name = pName,  isUsed = isUsed,  
@@ -27,7 +28,8 @@ function penalty_test()
         show(p)
 
         x = [1.0, 2.0];
-        sv = compute_penalty(p, x);
+        y = [4.3, 2.9];
+        sv = compute_penalty(p, (x,y));
         @test scalar_value(p) == sv
     end
 end
@@ -72,11 +74,17 @@ function pvector_test()
             end
         end
 
+        use(pv, :p3);
+        @test is_used(pv, :p3)
+        no_use(pv, :p3)
+        @test !is_used(pv, :p3)
+
         # Computing penalties
         x = [3.4, 4.5];
-        pTotal = total_penalty(pv, data = x);
-        compute_all_penalties(pv, x);
-        pTotal2 = total_penalty(pv, data = x);
+        y = [9.2, 0.8];
+        pTotal = total_penalty(pv, data = (x, y));
+        compute_all_penalties(pv, (x, y));
+        pTotal2 = total_penalty(pv, data = (x, y));
         @test pTotal ≈ pTotal2
 
         report_penalties(pv)

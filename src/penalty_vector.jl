@@ -9,7 +9,7 @@ Base.getindex(pv :: PenaltyVector, idx) = getindex(pv.pv, idx);
 Base.setindex!(pv :: PenaltyVector, v :: Penalty, idx) = setindex!(pv.pv, v, idx);
 Base.push!(pv :: PenaltyVector, v :: Penalty) = push!(pv.pv, v);
 
-Base.iterate(pv :: PenaltyVector) = (pv[1], 2);
+Base.iterate(pv :: PenaltyVector) = Base.iterate(pv, 1)
 
 function Base.iterate(pv :: PenaltyVector, idx) 
     if idx > length(pv)
@@ -17,6 +17,21 @@ function Base.iterate(pv :: PenaltyVector, idx)
     else
         return (pv.pv[idx], idx+1)
     end
+end
+
+use(pv :: PenaltyVector, pName :: Symbol) = set_use(pv, pName, true);
+no_use(pv :: PenaltyVector, pName :: Symbol) = set_use(pv, pName, false);
+
+function set_use(pv :: PenaltyVector, pName :: Symbol, doUse :: Bool)
+    p = retrieve(pv, pName);
+    @assert !isnothing(p)  "Penalty $pName not found"
+    set_use(p, doUse);
+end
+
+function is_used(pv :: PenaltyVector, pName :: Symbol)
+    p = retrieve(pv, pName);
+    @assert !isnothing(p)  "Penalty $pName not found"
+    return is_used(p);
 end
 
 
@@ -93,10 +108,13 @@ end
 
 Report all (positive) penalties. Optionally recompute with provided data.
 """
-function report_penalties(pv :: PenaltyVector; data = nothing, io = stdout)
+function report_penalties(pv :: PenaltyVector;  io = stdout,
+    data = nothing)
+
+    nPen = length(pv);
     pTotal = total_penalty(pv; data = data);
     pStr = format_number(pTotal);
-    println(io, "Penalties:   total = $pStr")
+    println(io, "$nPen Penalties:   total = $pStr")
     for p in pv
         if is_used(p)
             pStr = format_number(scalar_value(p));
