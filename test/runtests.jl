@@ -1,8 +1,8 @@
 using PenaltiesLH
 using Test
 
-# Scalar penalty functions must accept multiple arguments as tuples
-scalar_test_fct((x, y)) = sum(x) + sum(y);
+# Scalar penalty functions can accept multiple arguments.
+scalar_test_fct(x, y) = sum(x) + sum(y);
 
 function make_test_penalty(pName :: Symbol; isUsed :: Bool = true)
     return Penalty(name = pName,  isUsed = isUsed,  
@@ -29,6 +29,7 @@ function penalty_test()
 
         x = [1.0, 2.0];
         y = [4.3, 2.9];
+        # Need to package multiple arguments into a tuple
         sv = compute_penalty(p, (x,y));
         @test scalar_value(p) == sv
     end

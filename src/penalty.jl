@@ -19,10 +19,14 @@ Base.show(io :: IO, p :: Penalty) = println(io,  show_string(p));
 	$(SIGNATURES)
 
 Compute and return scalar penalty.
-Multiple inputs to `scalarFct` must be packaged into a tuple.
+Multiple inputs to `scalarFct` must be packaged into a tuple. This will then be splatted into the `scalarFct`.
 """
 function compute_penalty(p :: Penalty, x)
-    sv = p.scalarFct(x);
+    if isa(x, Tuple)
+        sv = p.scalarFct(x...);
+    else
+        sv = p.scalarFct(x);
+    end
     set_scalar_value(p, sv);
     return sv
 end
